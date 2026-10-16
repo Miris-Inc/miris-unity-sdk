@@ -7,9 +7,9 @@ Welcome to the Miris Unity Integration for spatial streaming.
 ## Requirements
 
 <!--END_MDX_STRIP-->
-Your Unity project must be using Unity 6000.0.58f2 or newer, with the built-in render pipeline.
+Your Unity project must be using Unity 6000.0.58f2 or newer, with the built-in render pipeline or URP. On Unity 6000.0 to 6000.3, URP's Compatibility Mode must be off for proper rendering in the Scene and Game views in the editor.
 
-Splats currently render on Apple platforms only. On other platforms, and in URP projects, the `Miris Stream Controller` logs an error and renders nothing.
+Assets currently render on Apple platforms only. On other platforms, and under any other render pipeline, the `Miris Stream Controller` logs an error and renders nothing.
 
 For desktop hosts, the system requirements are below:
 
