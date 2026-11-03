@@ -28,18 +28,18 @@ public class MirisBindings {
     return ret;
   }
 
-  public static AquaStatus BeginFrame(global::System.IntPtr context, double previousFrameTimeMs) {
-    AquaStatus ret = (AquaStatus)MirisBindingsPINVOKE.BeginFrame(context, previousFrameTimeMs);
+  public static AquaStatus BeginFrame(global::System.IntPtr context, double previousFrameTimeMs, int primsResident, int primCapacity) {
+    AquaStatus ret = (AquaStatus)MirisBindingsPINVOKE.BeginFrame(context, previousFrameTimeMs, primsResident, primCapacity);
     return ret;
   }
 
-  public static global::System.IntPtr CreateClientForContext(global::System.IntPtr context) {
-    global::System.IntPtr ret = MirisBindingsPINVOKE.CreateClientForContext(context);
+  public static global::System.IntPtr CreateClientForContext(global::System.IntPtr context, uint id) {
+    global::System.IntPtr ret = MirisBindingsPINVOKE.CreateClientForContext(context, id);
     return ret;
   }
 
-  public static global::System.IntPtr CreateClient() {
-    global::System.IntPtr ret = MirisBindingsPINVOKE.CreateClient();
+  public static global::System.IntPtr CreateClient(uint id) {
+    global::System.IntPtr ret = MirisBindingsPINVOKE.CreateClient(id);
     return ret;
   }
 
