@@ -15,6 +15,9 @@ namespace Miris.Runtime
     {
         private ClientHandle m_handle = System.IntPtr.Zero;
 
+        // Unity runs a single client, so its telemetry scene id is always 1.
+        internal const uint Id = 1;
+
         /// <summary>
         /// Meant for Miris-internal use.
         /// </summary>
@@ -58,7 +61,7 @@ namespace Miris.Runtime
                 return;
             }
 
-            m_handle = MirisBindings.CreateClientForContext(contextHandle.Value);
+            m_handle = MirisBindings.CreateClientForContext(contextHandle.Value, Id, IntPtr.Zero);
 
             // SpatialFormat is a generated binding type, so it owns native memory and
             // is only needed for the duration of the call.
