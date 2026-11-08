@@ -18,6 +18,13 @@ public class MirisBindings {
     return ret;
   }
 
+  public static uint kTelemetryMaxUrlBytes {
+    get {
+      uint ret = MirisBindingsPINVOKE.kTelemetryMaxUrlBytes_get();
+      return ret;
+    } 
+  }
+
   public static global::System.IntPtr CreateAquaContext() {
     global::System.IntPtr ret = MirisBindingsPINVOKE.CreateAquaContext();
     return ret;
@@ -28,18 +35,18 @@ public class MirisBindings {
     return ret;
   }
 
-  public static AquaStatus BeginFrame(global::System.IntPtr context, double previousFrameTimeMs) {
-    AquaStatus ret = (AquaStatus)MirisBindingsPINVOKE.BeginFrame(context, previousFrameTimeMs);
+  public static AquaStatus BeginFrame(global::System.IntPtr context, double previousFrameTimeMs, int primsResident, int primCapacity) {
+    AquaStatus ret = (AquaStatus)MirisBindingsPINVOKE.BeginFrame(context, previousFrameTimeMs, primsResident, primCapacity);
     return ret;
   }
 
-  public static global::System.IntPtr CreateClientForContext(global::System.IntPtr context) {
-    global::System.IntPtr ret = MirisBindingsPINVOKE.CreateClientForContext(context);
+  public static global::System.IntPtr CreateClientForContext(global::System.IntPtr context, uint id, global::System.IntPtr telemetryCollector) {
+    global::System.IntPtr ret = MirisBindingsPINVOKE.CreateClientForContext(context, id, telemetryCollector);
     return ret;
   }
 
-  public static global::System.IntPtr CreateClient() {
-    global::System.IntPtr ret = MirisBindingsPINVOKE.CreateClient();
+  public static global::System.IntPtr CreateClient(uint id, global::System.IntPtr telemetryCollector) {
+    global::System.IntPtr ret = MirisBindingsPINVOKE.CreateClient(id, telemetryCollector);
     return ret;
   }
 
@@ -61,6 +68,11 @@ public class MirisBindings {
 
   public static ulong PrefetchContent(global::System.IntPtr client, string url) {
     ulong ret = MirisBindingsPINVOKE.PrefetchContent(client, url);
+    return ret;
+  }
+
+  public static AquaStatus TickTelemetrySampler(global::System.IntPtr[] clients, int clientCount) {
+    AquaStatus ret = (AquaStatus)MirisBindingsPINVOKE.TickTelemetrySampler(clients, clientCount);
     return ret;
   }
 
@@ -309,6 +321,91 @@ public class MirisBindings {
 
   public static StringVector GetAvailableTags(global::System.IntPtr client) {
     StringVector ret = new StringVector(MirisBindingsPINVOKE.GetAvailableTags(client), true);
+    return ret;
+  }
+
+  public static AquaStatus SetTelemetryTransportCallback(global::System.IntPtr callback) {
+    AquaStatus ret = (AquaStatus)MirisBindingsPINVOKE.SetTelemetryTransportCallback(callback);
+    return ret;
+  }
+
+  public static global::System.IntPtr CreateTelemetryCollector(string sessionId, double sessionStartTimeMs, bool isNewSession, uint mirisId) {
+    global::System.IntPtr ret = MirisBindingsPINVOKE.CreateTelemetryCollector(sessionId, sessionStartTimeMs, isNewSession, mirisId);
+    return ret;
+  }
+
+  public static AquaStatus DestroyTelemetryCollector(global::System.IntPtr collector) {
+    AquaStatus ret = (AquaStatus)MirisBindingsPINVOKE.DestroyTelemetryCollector(collector);
+    return ret;
+  }
+
+  public static AquaStatus TickTelemetryCollector(global::System.IntPtr collector, double monotonicTimeMs) {
+    AquaStatus ret = (AquaStatus)MirisBindingsPINVOKE.TickTelemetryCollector(collector, monotonicTimeMs);
+    return ret;
+  }
+
+  public static double GetTelemetryCollectorNow(global::System.IntPtr collector) {
+    double ret = MirisBindingsPINVOKE.GetTelemetryCollectorNow(collector);
+    return ret;
+  }
+
+  public static AquaStatus FlushTelemetryCollector(global::System.IntPtr collector) {
+    AquaStatus ret = (AquaStatus)MirisBindingsPINVOKE.FlushTelemetryCollector(collector);
+    return ret;
+  }
+
+  public static AquaStatus EnqueueTelemetryConfigurationMiris(global::System.IntPtr collector, double timestampMs, MirisPackage package, string version, string hostname, string campaignId, string creativeId, string placementId) {
+    AquaStatus ret = (AquaStatus)MirisBindingsPINVOKE.EnqueueTelemetryConfigurationMiris(collector, timestampMs, (int)package, version, hostname, campaignId, creativeId, placementId);
+    return ret;
+  }
+
+  public static AquaStatus EnqueueTelemetryConfigurationScene(global::System.IntPtr collector, double timestampMs, uint sceneId, float width, float height, float renderWidth, float renderHeight, float pixelRatio, string viewerKey) {
+    AquaStatus ret = (AquaStatus)MirisBindingsPINVOKE.EnqueueTelemetryConfigurationScene(collector, timestampMs, sceneId, width, height, renderWidth, renderHeight, pixelRatio, viewerKey);
+    return ret;
+  }
+
+  public static AquaStatus EnqueueTelemetryConfigurationCamera(global::System.IntPtr collector, double timestampMs, uint sceneId, int cameraId, float aspect, float fov, float nearPlane, float farPlane) {
+    AquaStatus ret = (AquaStatus)MirisBindingsPINVOKE.EnqueueTelemetryConfigurationCamera(collector, timestampMs, sceneId, cameraId, aspect, fov, nearPlane, farPlane);
+    return ret;
+  }
+
+  public static AquaStatus EnqueueTelemetryConfigurationStream(global::System.IntPtr collector, double timestampMs, uint sceneId, int streamId, string assetId, float[] boundsMin, float[] boundsMax) {
+    AquaStatus ret = (AquaStatus)MirisBindingsPINVOKE.EnqueueTelemetryConfigurationStream(collector, timestampMs, sceneId, streamId, assetId, boundsMin, boundsMax);
+    return ret;
+  }
+
+  public static AquaStatus EnqueueTelemetryError(global::System.IntPtr collector, double timestampMs, ErrorEntryName name, string message) {
+    AquaStatus ret = (AquaStatus)MirisBindingsPINVOKE.EnqueueTelemetryError(collector, timestampMs, (int)name, message);
+    return ret;
+  }
+
+  public static AquaStatus EnqueueTelemetryLifecycle(global::System.IntPtr collector, double timestampMs, double durationMs, TargetType targetType, uint sceneId, int objectId, uint octantId, LifecycleEntryName name) {
+    AquaStatus ret = (AquaStatus)MirisBindingsPINVOKE.EnqueueTelemetryLifecycle(collector, timestampMs, durationMs, (int)targetType, sceneId, objectId, octantId, (int)name);
+    return ret;
+  }
+
+  public static AquaStatus EnqueueTelemetryInteractionPointer(global::System.IntPtr collector, double timestampMs, TargetType targetType, uint sceneId, int objectId, InteractionEntryName name, float x, float y, float button) {
+    AquaStatus ret = (AquaStatus)MirisBindingsPINVOKE.EnqueueTelemetryInteractionPointer(collector, timestampMs, (int)targetType, sceneId, objectId, (int)name, x, y, button);
+    return ret;
+  }
+
+  public static AquaStatus EnqueueTelemetryInteractionWheel(global::System.IntPtr collector, double timestampMs, TargetType targetType, uint sceneId, int objectId, float x, float y, float button, float deltaX, float deltaY, float deltaZ) {
+    AquaStatus ret = (AquaStatus)MirisBindingsPINVOKE.EnqueueTelemetryInteractionWheel(collector, timestampMs, (int)targetType, sceneId, objectId, x, y, button, deltaX, deltaY, deltaZ);
+    return ret;
+  }
+
+  public static AquaStatus EnqueueTelemetrySnapshot(global::System.IntPtr collector, double timestampMs, double durationMs, float averageMainThreadTime, float averageActiveStreamCount, float averageFps, float averageVisibleNodes, float averageVisibleSplats, double averageCacheUsedBytes, double averageHeapUsedBytes, double averageHeapTotalBytes) {
+    AquaStatus ret = (AquaStatus)MirisBindingsPINVOKE.EnqueueTelemetrySnapshot(collector, timestampMs, durationMs, averageMainThreadTime, averageActiveStreamCount, averageFps, averageVisibleNodes, averageVisibleSplats, averageCacheUsedBytes, averageHeapUsedBytes, averageHeapTotalBytes);
+    return ret;
+  }
+
+  public static AquaStatus EnqueueTelemetryTiming(global::System.IntPtr collector, double timestampMs, double durationMs, TargetType targetType, uint sceneId, int objectId, TimingEntryName name) {
+    AquaStatus ret = (AquaStatus)MirisBindingsPINVOKE.EnqueueTelemetryTiming(collector, timestampMs, durationMs, (int)targetType, sceneId, objectId, (int)name);
+    return ret;
+  }
+
+  public static AquaStatus EnqueueTelemetryTransformation(global::System.IntPtr collector, double timestampMs, TargetType targetType, uint sceneId, int objectId, float[] position, float[] quaternion, float[] scale) {
+    AquaStatus ret = (AquaStatus)MirisBindingsPINVOKE.EnqueueTelemetryTransformation(collector, timestampMs, (int)targetType, sceneId, objectId, position, quaternion, scale);
     return ret;
   }
 
