@@ -16,5 +16,16 @@ namespace Miris.Runtime
                 matrix.m03, matrix.m13, matrix.m23, matrix.m33
             };
         }
+
+        // Inverse of MatrixToFloatArray: the native column-major layout.
+        internal static Matrix4x4 FloatArrayToMatrix(float[] values)
+        {
+            return new Matrix4x4(
+                new Vector4(values[0], values[1], values[2], values[3]),
+                new Vector4(values[4], values[5], values[6], values[7]),
+                new Vector4(values[8], values[9], values[10], values[11]),
+                new Vector4(values[12], values[13], values[14], values[15])
+            );
+        }
     }
 }
