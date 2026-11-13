@@ -22,7 +22,8 @@ public enum SceneObjectType {
   LodOctree,
   VariantSetCollection,
   VariantSet,
-  VariantSetOption
+  VariantSetOption,
+  ClusterLodMesh
 }
 
 }
