@@ -1,14 +1,20 @@
 {
   "name": "com.miris.sdk.core",
-  "version": "2026.10.37983652776",
+  "version": "2026.11.43603288960",
   "displayName": "Miris SDK Core",
-  "description": "Miris SDK Core for Unity",
+  "description": "Streams Miris assets into Unity scenes, handling network streaming, decoding and rendering.",
   "unity": "6000.0",
   "unityRelease": "58f2",
+  "documentationUrl": "https://docs.miris.com",
+  "keywords": [
+    "miris",
+    "streaming",
+    "3d",
+    "spatial",
+    "xr"
+  ],
   "dependencies": {
-    "com.unity.mathematics": "1.2.6",
-    "com.unity.nuget.newtonsoft-json": "3.2.1",
-    "com.unity.test-framework": "1.5.1"
+    "com.unity.mathematics": "1.2.6"
   },
   "author": {
     "name": "Miris, Inc",
