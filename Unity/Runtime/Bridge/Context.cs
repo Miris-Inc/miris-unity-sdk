@@ -14,7 +14,7 @@ namespace Miris.Runtime
     /// <summary>
     /// Context API Object used by our C# code 
     /// </summary>
-    public class Context : IDisposable
+    internal class Context : IDisposable
     {
 #if UNITY_EDITOR
         public static string DoNotWarnAgainPrefsKey = "MirisClient_DoNotWarnAgain";
@@ -76,7 +76,7 @@ namespace Miris.Runtime
                         break;
                     // "Open Release Downloader"
                     case 1:
-                        UnityEditor.EditorApplication.ExecuteMenuItem("Tools/Miris/Platform Downloader");
+                        UnityEditor.EditorApplication.ExecuteMenuItem("Miris/Platform Downloader");
                         break;
                     // "Do not show again"
                     case 2:
@@ -102,7 +102,7 @@ namespace Miris.Runtime
 
         public void BeginFrame(double previousFrameTimeMs)
         {
-            MirisBindings.BeginFrame(m_handle, previousFrameTimeMs);
+            MirisBindings.BeginFrame(m_handle, previousFrameTimeMs, 0, 0);
         }
     }
 }
