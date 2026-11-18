@@ -294,6 +294,9 @@ class MirisBindingsPINVOKE {
   [global::System.Runtime.InteropServices.DllImport(MirisApi.AquaUnityPath, EntryPoint="CSharp_MirisfRuntime_GetSizeOfDataForCompressionType___")]
   public static extern uint GetSizeOfDataForCompressionType(int jarg1);
 
+  [global::System.Runtime.InteropServices.DllImport(MirisApi.AquaUnityPath, EntryPoint="CSharp_MirisfRuntime_kTelemetryMaxUrlBytes_get___")]
+  public static extern uint kTelemetryMaxUrlBytes_get();
+
   [global::System.Runtime.InteropServices.DllImport(MirisApi.AquaUnityPath, EntryPoint="CSharp_MirisfRuntime_new_SpatialFormat___")]
   public static extern global::System.IntPtr new_SpatialFormat();
 
@@ -541,13 +544,13 @@ class MirisBindingsPINVOKE {
   public static extern int DestroyAquaContext(global::System.IntPtr jarg1);
 
   [global::System.Runtime.InteropServices.DllImport(MirisApi.AquaUnityPath, EntryPoint="CSharp_MirisfRuntime_BeginFrame___")]
-  public static extern int BeginFrame(global::System.IntPtr jarg1, double jarg2);
+  public static extern int BeginFrame(global::System.IntPtr jarg1, double jarg2, int jarg3, int jarg4);
 
   [global::System.Runtime.InteropServices.DllImport(MirisApi.AquaUnityPath, EntryPoint="CSharp_MirisfRuntime_CreateClientForContext___")]
-  public static extern global::System.IntPtr CreateClientForContext(global::System.IntPtr jarg1);
+  public static extern global::System.IntPtr CreateClientForContext(global::System.IntPtr jarg1, uint jarg2, global::System.IntPtr jarg3);
 
   [global::System.Runtime.InteropServices.DllImport(MirisApi.AquaUnityPath, EntryPoint="CSharp_MirisfRuntime_CreateClient___")]
-  public static extern global::System.IntPtr CreateClient();
+  public static extern global::System.IntPtr CreateClient(uint jarg1, global::System.IntPtr jarg2);
 
   [global::System.Runtime.InteropServices.DllImport(MirisApi.AquaUnityPath, EntryPoint="CSharp_MirisfRuntime_DestroyClient___")]
   public static extern int DestroyClient(global::System.IntPtr jarg1);
@@ -560,6 +563,9 @@ class MirisBindingsPINVOKE {
 
   [global::System.Runtime.InteropServices.DllImport(MirisApi.AquaUnityPath, EntryPoint="CSharp_MirisfRuntime_PrefetchContent___")]
   public static extern ulong PrefetchContent(global::System.IntPtr jarg1, string jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport(MirisApi.AquaUnityPath, EntryPoint="CSharp_MirisfRuntime_TickTelemetrySampler___")]
+  public static extern int TickTelemetrySampler(global::System.IntPtr[] jarg1, int jarg2);
 
   [global::System.Runtime.InteropServices.DllImport(MirisApi.AquaUnityPath, EntryPoint="CSharp_MirisfRuntime_ClearScene___")]
   public static extern int ClearScene(global::System.IntPtr jarg1);
@@ -707,6 +713,57 @@ class MirisBindingsPINVOKE {
 
   [global::System.Runtime.InteropServices.DllImport(MirisApi.AquaUnityPath, EntryPoint="CSharp_MirisfRuntime_GetAvailableTags___")]
   public static extern global::System.IntPtr GetAvailableTags(global::System.IntPtr jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport(MirisApi.AquaUnityPath, EntryPoint="CSharp_MirisfRuntime_SetTelemetryTransportCallback___")]
+  public static extern int SetTelemetryTransportCallback(global::System.IntPtr jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport(MirisApi.AquaUnityPath, EntryPoint="CSharp_MirisfRuntime_CreateTelemetryCollector___")]
+  public static extern global::System.IntPtr CreateTelemetryCollector(string jarg1, double jarg2, bool jarg3, uint jarg4, double jarg5);
+
+  [global::System.Runtime.InteropServices.DllImport(MirisApi.AquaUnityPath, EntryPoint="CSharp_MirisfRuntime_DestroyTelemetryCollector___")]
+  public static extern int DestroyTelemetryCollector(global::System.IntPtr jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport(MirisApi.AquaUnityPath, EntryPoint="CSharp_MirisfRuntime_TickTelemetryCollector___")]
+  public static extern int TickTelemetryCollector(global::System.IntPtr jarg1, double jarg2);
+
+  [global::System.Runtime.InteropServices.DllImport(MirisApi.AquaUnityPath, EntryPoint="CSharp_MirisfRuntime_GetTelemetryCollectorNow___")]
+  public static extern double GetTelemetryCollectorNow(global::System.IntPtr jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport(MirisApi.AquaUnityPath, EntryPoint="CSharp_MirisfRuntime_FlushTelemetryCollector___")]
+  public static extern int FlushTelemetryCollector(global::System.IntPtr jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport(MirisApi.AquaUnityPath, EntryPoint="CSharp_MirisfRuntime_EnqueueTelemetryConfigurationMiris___")]
+  public static extern int EnqueueTelemetryConfigurationMiris(global::System.IntPtr jarg1, double jarg2, int jarg3, string jarg4, string jarg5, string jarg6, string jarg7, string jarg8);
+
+  [global::System.Runtime.InteropServices.DllImport(MirisApi.AquaUnityPath, EntryPoint="CSharp_MirisfRuntime_EnqueueTelemetryConfigurationScene___")]
+  public static extern int EnqueueTelemetryConfigurationScene(global::System.IntPtr jarg1, double jarg2, uint jarg3, float jarg4, float jarg5, float jarg6, float jarg7, float jarg8, string jarg9);
+
+  [global::System.Runtime.InteropServices.DllImport(MirisApi.AquaUnityPath, EntryPoint="CSharp_MirisfRuntime_EnqueueTelemetryConfigurationCamera___")]
+  public static extern int EnqueueTelemetryConfigurationCamera(global::System.IntPtr jarg1, double jarg2, uint jarg3, int jarg4, float jarg5, float jarg6, float jarg7, float jarg8);
+
+  [global::System.Runtime.InteropServices.DllImport(MirisApi.AquaUnityPath, EntryPoint="CSharp_MirisfRuntime_EnqueueTelemetryConfigurationStream___")]
+  public static extern int EnqueueTelemetryConfigurationStream(global::System.IntPtr jarg1, double jarg2, uint jarg3, int jarg4, string jarg5, [global::System.Runtime.InteropServices.In, global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPArray)]float[] jarg6, [global::System.Runtime.InteropServices.In, global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPArray)]float[] jarg7);
+
+  [global::System.Runtime.InteropServices.DllImport(MirisApi.AquaUnityPath, EntryPoint="CSharp_MirisfRuntime_EnqueueTelemetryError___")]
+  public static extern int EnqueueTelemetryError(global::System.IntPtr jarg1, double jarg2, int jarg3, string jarg4);
+
+  [global::System.Runtime.InteropServices.DllImport(MirisApi.AquaUnityPath, EntryPoint="CSharp_MirisfRuntime_EnqueueTelemetryLifecycle___")]
+  public static extern int EnqueueTelemetryLifecycle(global::System.IntPtr jarg1, double jarg2, double jarg3, int jarg4, uint jarg5, int jarg6, uint jarg7, int jarg8);
+
+  [global::System.Runtime.InteropServices.DllImport(MirisApi.AquaUnityPath, EntryPoint="CSharp_MirisfRuntime_EnqueueTelemetryInteractionPointer___")]
+  public static extern int EnqueueTelemetryInteractionPointer(global::System.IntPtr jarg1, double jarg2, int jarg3, uint jarg4, int jarg5, int jarg6, float jarg7, float jarg8, float jarg9);
+
+  [global::System.Runtime.InteropServices.DllImport(MirisApi.AquaUnityPath, EntryPoint="CSharp_MirisfRuntime_EnqueueTelemetryInteractionWheel___")]
+  public static extern int EnqueueTelemetryInteractionWheel(global::System.IntPtr jarg1, double jarg2, int jarg3, uint jarg4, int jarg5, float jarg6, float jarg7, float jarg8, float jarg9, float jarg10, float jarg11);
+
+  [global::System.Runtime.InteropServices.DllImport(MirisApi.AquaUnityPath, EntryPoint="CSharp_MirisfRuntime_EnqueueTelemetrySnapshot___")]
+  public static extern int EnqueueTelemetrySnapshot(global::System.IntPtr jarg1, double jarg2, double jarg3, float jarg4, float jarg5, float jarg6, float jarg7, float jarg8, double jarg9, double jarg10, double jarg11);
+
+  [global::System.Runtime.InteropServices.DllImport(MirisApi.AquaUnityPath, EntryPoint="CSharp_MirisfRuntime_EnqueueTelemetryTiming___")]
+  public static extern int EnqueueTelemetryTiming(global::System.IntPtr jarg1, double jarg2, double jarg3, int jarg4, uint jarg5, int jarg6, int jarg7);
+
+  [global::System.Runtime.InteropServices.DllImport(MirisApi.AquaUnityPath, EntryPoint="CSharp_MirisfRuntime_EnqueueTelemetryTransformation___")]
+  public static extern int EnqueueTelemetryTransformation(global::System.IntPtr jarg1, double jarg2, int jarg3, uint jarg4, int jarg5, [global::System.Runtime.InteropServices.In, global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPArray)]float[] jarg6, [global::System.Runtime.InteropServices.In, global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPArray)]float[] jarg7, [global::System.Runtime.InteropServices.In, global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPArray)]float[] jarg8);
 }
 
 }
