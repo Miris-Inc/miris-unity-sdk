@@ -8,7 +8,7 @@ namespace Miris.Runtime
     /// <summary>
     /// Scene provides access to the C++ Scene without exposing the native C bindings
     /// </summary>
-    public class Scene
+    internal class Scene
     {
         private Client m_client;
 
