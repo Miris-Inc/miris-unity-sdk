@@ -20,7 +20,7 @@ namespace Miris.Runtime
         public bool HasPrevPage => !string.IsNullOrEmpty(PrevCursor);
     }
 
-    public class AssetManager : IDisposable
+    public class AssetManager
     {
         private readonly Client m_client;
         private StringVector m_tags = new StringVector();
@@ -30,9 +30,9 @@ namespace Miris.Runtime
         // asset limit) changes, so listeners (see MirisController) know to re-fetch. Unlike
         // TagsChanged, AssetManager does not itself own or store this value -- the caller passes
         // it into GetAssets() directly each time -- so there is no corresponding SetAssetLimit.
-        public event Action AssetLimitChanged;
+        internal event Action AssetLimitChanged;
 
-        public void NotifyAssetLimitChanged()
+        internal void NotifyAssetLimitChanged()
         {
             AssetLimitChanged?.Invoke();
         }
@@ -42,7 +42,8 @@ namespace Miris.Runtime
             m_client = client;
         }
 
-        public void Dispose()
+        // Owned by the controller, which disposes it on teardown.
+        internal void Dispose()
         {
             m_tags?.Dispose();
             m_tags = null;
@@ -167,7 +168,7 @@ namespace Miris.Runtime
             });
         }
 
-        public void SetViewerKey(string viewerKey)
+        internal void SetViewerKey(string viewerKey)
         {
             m_client.SetAssetViewerKey(viewerKey);
         }
