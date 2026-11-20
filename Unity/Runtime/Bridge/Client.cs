@@ -11,9 +11,12 @@ namespace Miris.Runtime
     /// <summary>
     /// Client API Object used by our C# code
     /// </summary>
-    public class Client : IDisposable
+    internal class Client : IDisposable
     {
         private ClientHandle m_handle = System.IntPtr.Zero;
+
+        // Unity runs a single client, so its telemetry scene id is always 1.
+        internal const uint Id = 1;
 
         /// <summary>
         /// Meant for Miris-internal use.
@@ -42,7 +45,12 @@ namespace Miris.Runtime
         /// <summary>
         /// Create a client against the given context. The context must outlive the client
         /// </summary>
-        public Client(Context context)
+        public Client(Context context) : this(context, null)
+        {
+        }
+
+        // telemetryCollector may be null; if not, it must outlive the client.
+        internal Client(Context context, TelemetryCollector telemetryCollector)
         {
             MirisDebug.Log("Creating Client");
 
@@ -58,7 +66,8 @@ namespace Miris.Runtime
                 return;
             }
 
-            m_handle = MirisBindings.CreateClientForContext(contextHandle.Value);
+            m_handle = MirisBindings.CreateClientForContext(contextHandle.Value, Id,
+                                                            telemetryCollector?.Handle ?? IntPtr.Zero);
 
             // SpatialFormat is a generated binding type, so it owns native memory and
             // is only needed for the duration of the call.
@@ -153,9 +162,9 @@ namespace Miris.Runtime
             return MirisBindings.AddStream(m_handle, streamName, contentUrl, doNotRefine);
         }
 
-        public int AddStreamById(string streamName, string assetId, bool doNotRefine)
+        public int AddStreamById(string streamName, string assetId, string viewerKey)
         {
-            return MirisBindings.AddStreamById(m_handle, streamName, assetId, doNotRefine);
+            return MirisBindings.AddStreamById(m_handle, streamName, assetId, viewerKey);
         }
 
         public bool SetStreamFetchMode(int streamObjectId, StreamFetchMode mode)
