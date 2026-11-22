@@ -4,23 +4,11 @@ using System;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
-using TMPro;
 
 namespace Miris.Runtime
 {
     public static class UiUtils
     {
-        static public void InitializeEnumDropdown(TMP_Dropdown dropdown, Type enumType, UnityEngine.Events.UnityAction<int> listenerFunc)
-        {
-            foreach (string value in Enum.GetNames(enumType))
-            {
-                dropdown.options.Add(new TMP_Dropdown.OptionData(value));
-            }
-
-            dropdown.onValueChanged.AddListener(listenerFunc);
-            dropdown.RefreshShownValue();
-        }
-
         public static async Task<Texture2D> FetchTextureAsync(string url)
         {
             try
