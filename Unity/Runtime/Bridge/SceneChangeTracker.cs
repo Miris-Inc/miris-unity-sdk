@@ -9,7 +9,7 @@ namespace Miris.Runtime
     /// An RAII object to provide a scope for content to be sync'ed from the scene model
     /// to Unity
     /// </summary>
-    public class SceneChangeTracker : IDisposable
+    internal class SceneChangeTracker : IDisposable
     {
         private bool m_sceneLocked;
         private Client m_client;
