@@ -7,9 +7,9 @@ Welcome to the Miris Unity Integration for spatial streaming.
 ## Requirements
 
 <!--END_MDX_STRIP-->
-Your Unity project must be using Unity 6000.0.58f2 or newer, with the built-in render pipeline.
+Your Unity project must be using Unity 6000.0.58f2 or newer, with the built-in render pipeline or URP. On Unity 6000.0 to 6000.3, URP's Compatibility Mode must be off for proper rendering in the Scene and Game views in the editor.
 
-Splats currently render on Apple platforms only. On other platforms, and in URP projects, the `Miris Stream Controller` logs an error and renders nothing.
+Assets currently render on Apple platforms only. On other platforms, and under any other render pipeline, the SDK logs an error and renders nothing.
 
 For desktop hosts, the system requirements are below:
 
@@ -33,7 +33,7 @@ For deployments targeting specific devices, the minimum system requirements are 
     ![](img/package_manager_1.png)
     * Use the "+" button to `Install git package from url...`
     ![](img/package_manager_2.png)
-    * Paste the following into the git URL field to download the latest SDK, then click the install button: `https://github.com/Miris-Inc/MirisSDK.git?path=Unity#latest`
+    * Paste the following into the git URL field to download the latest SDK, then click the install button: `https://github.com/Miris-Inc/miris-unity-sdk.git?path=Unity#latest`
     ![](img/package_manager_3.png)
 
 3. The Miris SDK will need to install the native libraries it uses into the `Assets/Plugins/Miris` folder. If this folder does not contain platform folders with libraries inside, you will need to download them via the in editor tool. 
@@ -43,16 +43,20 @@ For deployments targeting specific devices, the minimum system requirements are 
     * If the folder does _not_ contain the libraries, or you see a pop-up like the above, you must follow the below instructions in step 4.
 
 4. Miris Platform Downloader Editor Tool
-    * In the Unity Editor window, in the toolbar, select Tools -> Miris -> Platform Downloader
+    * In the Unity Editor window, in the toolbar, select Miris -> Platform Downloader
       ![](img/git/downloader-1.png)
 
     * If you've been directed to download a specific release, change the Tag field. Otherwise, simply click the Install button.
 
-5. Prefab setup
+5. Add a Miris Stream
 
-    * Drop the Miris Stream and `Miris Stream Controller` prefab into your scene.
-    ![Prefab Setup](img/prefab_setup.png)
-    * On the `Miris Stream` prefab, enter the ID for the asset you want to stream. This ID will have been supplied to you by our asset upload service, and is of the form `aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee`.
+    * Add a `Miris Stream` to your scene in any of these ways:
+        * Choose **GameObject > Miris > Stream**, or right-click in the Hierarchy and choose **Miris > Stream**. If you right-click an existing object, the stream is added as its child.
+        * Drop the `Miris Stream` prefab into your scene.
+        ![Prefab Setup](img/prefab_setup.png)
+        * Select a GameObject and choose **Add Component > Miris > Stream**.
+    * On the `Miris Stream`, enter the ID for the asset you want to stream. This ID will have been supplied to you by our asset upload service, and is a UUIDv4, for example `2b3cb1df-f1bd-4d76-80f8-390c10ac21c6`.
+    * A GameObject can hold only one `Miris Stream`. To stream several assets, add one stream per GameObject.
 
 6. Stream!
 
@@ -61,6 +65,42 @@ For deployments targeting specific devices, the minimum system requirements are 
     ![](img/success.png)
 
 ## Upgrading
+
+### 0.3.0
+
+The classes that wrap the native library are no longer public: `Client`, `Context`, `Scene`, `SceneObject` and `SceneChangeTracker`. Some members of `MirisStreamController`, `MirisStream` and `AssetManager` are no longer public either. Calling them directly could put the streaming client into a state the SDK does not expect. Scripts that use only the members documented in Miris Components need no changes. Update other scripts as follows:
+
+| Before | After |
+| ------ | ----- |
+| `MirisStreamController.GetClient()` | No replacement. Use `MirisStream` and `MirisStreamController` instead. |
+| `MirisStreamController.AddStream(stream, url)` | Add a `Miris Stream` and set its asset ID. |
+| `MirisStreamController.SceneChangesDrained` | No replacement. |
+| `MirisStreamController.m_loadedMetadata` | No replacement. |
+| `MirisStream.GetModelRootObjectIds()`, `MirisStream.ModelRootCount` | No replacement. |
+| `AssetManager.SetViewerKey(key)` | `MirisStreamController.Instance.SetViewerKey(key)` |
+| `AssetManager.NotifyAssetLimitChanged()`, `AssetManager.AssetLimitChanged` | No replacement. |
+| `AssetManager.Dispose()` | No replacement. The controller disposes its Asset Manager, and `AssetManager` no longer implements `IDisposable`. |
+
+To add a stream from code, add a `MirisStream` component to an inactive GameObject, set its `m_assetId`, then activate the GameObject. To remove the stream, disable or destroy it.
+
+### 0.2.0
+
+The `Miris Stream Controller` prefab has been removed. `MirisStreamController` is no longer a component: the SDK creates one controller for the application the first time a `Miris Stream` is enabled, so a scene needs only its `Miris Stream`s. The viewer key moved from the controller's Inspector to **Miris > Settings**, saved to `Assets/Resources/MirisSettings.asset`.
+
+To upgrade a scene, delete its `Miris Stream Controller` object; the streams in it need no changes. Then move any viewer key you set on that controller into **Miris > Settings**: the project **Viewer Key** for a key every scene shares, or the **Scene** section's Viewer Key for a key only that scene uses. Update scripts as follows:
+
+| Before | After |
+| ------ | ----- |
+| A serialized `MirisStreamController` field assigned in the Inspector | `MirisStreamController.Instance` |
+| Finding the controller with `FindObjectOfType<MirisStreamController>()` | `MirisStreamController.Instance` |
+| Reaching the controller from `OnDisable` or `OnDestroy` | `MirisStreamController.TryGetActive(out MirisStreamController controller)`, which never starts one |
+| Setting `MirisStream.m_streamController` | Nothing: a stream registers with the controller itself |
+| `MirisAssetBrowserWindow.Open(controller)` | `MirisAssetBrowserWindow.Open()`, or **Miris > Asset Browser** |
+| Disabling the controller component to stop streaming | Disable the `Miris Stream`s instead |
+
+The controller now lasts the whole application rather than one scene: loading a scene keeps the streaming client running, and only the streams change.
+
+The **Tools > Miris** menu moved to a top-level **Miris** menu, next to the new **Settings** and **Asset Browser** items: look for **Show Startup Window**, **Platform Downloader** and **Toggle XR Simulation** there.
 
 ### 0.1.0
 
@@ -74,13 +114,22 @@ For deployments targeting specific devices, the minimum system requirements are 
 | `MirisStream.Status.NotLoaded` | `!IsLoaded()` |
 | `MirisStream.Status.Disabled` | `!isActiveAndEnabled` |
 | `MirisStream.Status.NoAssetId` | `string.IsNullOrEmpty(m_assetId)` |
-| `MirisStream.Status.NoController` | `m_streamController == null` |
-| `MirisStream.Status.ControllerInactive` | `!m_streamController.IsActive()` |
+| `MirisStream.Status.NoController` | No equivalent: a stream registers with the controller itself |
+| `MirisStream.Status.ControllerInactive` | `!MirisStreamController.TryGetActive(out _)` |
 | `MirisStream.Status.NoData` | No equivalent |
 
 `StreamStatus.Failed` is new: the stream could not be resolved or loaded.
 
 <!--MDX_STRIP-->
+## Support
+
+You're welcome to fork, clone and experiment with the SDK.
+
+- **Found a bug?** [Open an issue](https://github.com/Miris-Inc/miris-unity-sdk/issues).
+- **Anything else:** email [support@miris.com](mailto:support@miris.com).
+
+We don't accept pull requests.
+
 ### Notes
 
 * Miris employees should consult the centralized documentation, rather than this document.
