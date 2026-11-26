@@ -70,5 +70,11 @@ namespace Miris.Runtime
         // 0 = Additive (prefetch budget on top of the regular pool), 1 = Subtractive (taken out of it)
         [Range(0, 1)]
         public int m_prefetchBudgetMode;
+
+        // GPU memory for each cluster LOD pack's pool of mesh groups, in bytes; 0 = the platform's default.
+        public int m_clusterLodPoolBudgetBytes;
+
+        // The largest storage buffer the renderer can bind, in bytes; 0 = no limit.
+        public int m_clusterLodMaxBufferBytes;
     }
 }
