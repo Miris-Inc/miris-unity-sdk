@@ -5,22 +5,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace Miris.Runtime
 {
 
     /// <summary>
-    /// 
+    /// Streams one Miris asset into the scene. Set <see cref="m_assetId"/> and the stream
+    /// loads, decodes and renders the asset, in edit mode as well as play mode.
     /// </summary>
     [ExecuteInEditMode]
+    [DisallowMultipleComponent]
+    [AddComponentMenu("Miris/Stream")]
+    [HelpURL("https://docs.miris.com")]
     public class MirisStream : MonoBehaviour
     {
-        [SerializeField, Tooltip("Non-optional. The MirisStreamController governing this object.")]
-        public MirisStreamController m_streamController;
+        [NonSerialized]
+        internal MirisStreamController m_streamController;
 
         [Tooltip("The ID of the asset to be streamed.")]
         public string m_assetId = "";
+
+        [Tooltip("Viewer key for this asset. When set, it is used instead of the controller's, scene's or project's key.")]
+        public string m_viewerKey = "";
 
         // Debounce before demoting to Prefetch, to avoid thrashing near Opacity == 0.
         private const float c_prefetchDebounceSeconds = 0.1f;
@@ -32,6 +38,9 @@ namespace Miris.Runtime
         /// Tracks the previous asset id to handle changes 
         /// </summary>
         private string m_loadedAssetId = "";
+
+        // The viewer key m_loadedAssetId was loaded with.
+        private string m_loadedViewerKey = "";
 
         // Associated scene object.
         [NonSerialized]
@@ -198,7 +207,7 @@ namespace Miris.Runtime
         /// GetModelRootObjectIds because that allocates, and a caller watching for new ModelRoots
         /// every frame only needs the count.
         /// </summary>
-        public int ModelRootCount => m_modelRootObjectIdToRenderComponent.Count;
+        internal int ModelRootCount => m_modelRootObjectIdToRenderComponent.Count;
 
         /// <summary>
         /// Scene object ids of the ModelRoots this stream has populated so far. An external renderer
@@ -206,7 +215,7 @@ namespace Miris.Runtime
         /// rather than to the stream, and one stream can populate more than one. Grows as the stream
         /// arrives, so callers should not cache it.
         /// </summary>
-        public int[] GetModelRootObjectIds()
+        internal int[] GetModelRootObjectIds()
         {
             return m_modelRootObjectIdToRenderComponent.Keys.ToArray();
         }
@@ -226,9 +235,9 @@ namespace Miris.Runtime
         #region MonoBehaviour
         protected async void OnEnable()
         {
-            if (m_streamController != null && m_streamController.isActiveAndEnabled)
+            RegisterController();
+            if (m_streamController != null)
             {
-                // Only run this after MirisStreamController.OnEnable() has been called
                 await LoadStream();
             }
         }
@@ -237,12 +246,11 @@ namespace Miris.Runtime
         {
             ClearRenderResources();
 
-            if (m_streamController != null && m_streamController.isActiveAndEnabled)
+            if (m_streamController != null && m_streamController == MirisStreamController.Current)
             {
-                // Prevent this from being run if MirisStreamController.OnDisable() has been already called.
                 UnloadStream();
-                DeregisterController();
             }
+            DeregisterController();
         }
 
         protected async void Update()
@@ -312,6 +320,7 @@ namespace Miris.Runtime
 
             MirisDebug.Log($"Loading stream with asset {m_assetId}");
             m_loadedAssetId = m_assetId;
+            m_loadedViewerKey = m_viewerKey ?? "";
 
             // Invoke attempt load stream callbacks
             foreach (Action action in m_onLoadActions)
@@ -319,7 +328,7 @@ namespace Miris.Runtime
                 action.Invoke();
             }
 
-            m_streamController.AddStreamById(this, m_assetId);
+            m_streamController.AddStreamById(this, m_assetId, m_loadedViewerKey);
 
             // The octree always starts Regular; SyncFetchMode corrects it once one exists. Born
             // invisible skips the demote debounce, which is for mid-fade dips, not the initial state.
@@ -338,6 +347,7 @@ namespace Miris.Runtime
                 m_streamController.RemoveStream(this);
             }
             m_loadedAssetId = "";
+            m_loadedViewerKey = "";
             m_lastAppliedFetchMode = StreamFetchMode.Regular;
             m_zeroOpacitySeconds = 0f;
 
@@ -421,7 +431,7 @@ namespace Miris.Runtime
         }
 
         /// <summary>
-        /// Checks whether the asset id has changed, and reloads the
+        /// Checks whether the asset id or the loaded asset's viewer key has changed, and reloads the
         /// MirisStreamController if so.
         /// </summary>
         protected virtual async Task CheckContentChanged()
@@ -441,7 +451,9 @@ namespace Miris.Runtime
                 return;
             }
 
-            if (m_assetId != m_loadedAssetId)
+            // With nothing loaded, the next load reads the key anyway.
+            bool viewerKeyChanged = !string.IsNullOrEmpty(m_loadedAssetId) && (m_viewerKey ?? "") != m_loadedViewerKey;
+            if (m_assetId != m_loadedAssetId || viewerKeyChanged)
             {
                 UnloadStream();
                 await LoadStream();
@@ -449,28 +461,16 @@ namespace Miris.Runtime
         }
 
         /// <summary>
-        /// Finds a MirisStreamController to register with.
+        /// Registers with the running MirisStreamController, starting one if needed.
         /// </summary>
-        /// <exception cref="UnityException"></exception>
         private void RegisterController()
         {
-            if (m_streamController == null)
+            if (m_streamController != null && m_streamController == MirisStreamController.Current)
             {
-                // TODO: We should remove the FindObjectsByType invocation if we can, it's pretty expensive.
-                MirisStreamController[] streamControllers = FindObjectsByType<MirisStreamController>(FindObjectsSortMode.None);
-                if (streamControllers.Length == 1)
-                {
-                    m_streamController = streamControllers[0];
-                }
-                else if (streamControllers.Length == 0)
-                {
-                    throw new UnityException($"Unable to find a {nameof(MirisStreamController)}, please create one in scene '{SceneManager.GetActiveScene().name}'.");
-                }
-                else
-                {
-                    throw new UnityException($"Found {streamControllers.Length} {nameof(MirisStreamController)}s, please only have one in your scene.");
-                }
+                return;
             }
+
+            m_streamController = MirisStreamController.Instance;
         }
 
         /// <summary>
@@ -478,11 +478,6 @@ namespace Miris.Runtime
         /// </summary>
         private void DeregisterController()
         {
-            if (m_streamController == null)
-            {
-                return;
-            }
-
             m_streamController = null;
         }
 
@@ -546,6 +541,7 @@ namespace Miris.Runtime
         {
             ClearRenderResources();
             m_loadedAssetId = "";
+            m_loadedViewerKey = "";
             m_lastAppliedFetchMode = StreamFetchMode.Regular;
             m_zeroOpacitySeconds = 0f;
         }
