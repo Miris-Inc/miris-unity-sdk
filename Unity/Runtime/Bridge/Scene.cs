@@ -8,7 +8,7 @@ namespace Miris.Runtime
     /// <summary>
     /// Scene provides access to the C++ Scene without exposing the native C bindings
     /// </summary>
-    public class Scene
+    internal class Scene
     {
         private Client m_client;
 
@@ -23,9 +23,10 @@ namespace Miris.Runtime
             return GetSceneObject(streamObjectId);
         }
 
-        public SceneObject AddStreamById(string streamName, string uuid, bool doNotRefine=false)
+        /// <param name="viewerKey">Used for this stream instead of the client's key. Null or empty means unset.</param>
+        public SceneObject AddStreamById(string streamName, string uuid, string viewerKey = null)
         {
-            int streamObjectId = m_client.AddStreamById(streamName, uuid, doNotRefine);
+            int streamObjectId = m_client.AddStreamById(streamName, uuid, viewerKey);
             return GetSceneObject(streamObjectId);
         }
 
